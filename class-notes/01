@@ -1,0 +1,76 @@
+2025/03/10
+
+> space complexity is defined and described on how memory usage grows or shrinks depending on how a specific ds or algorithm allocates or deallocated memory
+> time complexity is defined as how the time needed for the execution of an algorithm grows or shrinks, independent of platform and language
+
+>> 8 bytes in memory: 4 bytes for a and 4 for i --> constant space use (it's always the same, independent of variables)
+>> if A were defined as a = array[n] --> linear space use (space use grows linearly with the size of n)
+>>
+>> given the arbitrary costs defined, take T(f_1) = 1(k_1) + k_2 + k_3 = 1 + 11 + 10 = 22
+>> since T(f_1) = 22 disregarding the value of n --> time use is constant
+  f_1(n):
+    # k_1 | 1
+    a = 0
+    # k_2 | 11
+    for i = 1, 2, ..., 10
+      # k_3 | 10
+      a + 1
+
+>> space use is constant, since there are only two variables being stored, independently of the value of n
+>>
+>> T(f_2) = k_1 + k_2 + k_3 = 1(k_1) + (n + 1)(k_2) + n(k_3) = k_1 + k_2*n + k_2 + k_3*n
+>> assume that constants are insignificant since the value of n => inf:
+>> => T(f_2) = n + n = 2n => T(f_2) = n
+>> time use is linear with n
+  f_2(n):
+    # k_1 | 1
+    a = 0
+    # k_2 | n + 1
+    for i = 1, 2, ..., n
+      # k_3 | n
+      a + 1
+
+>> T(f_3) = 1(k_1) + (n + 1)(k_2) + [n(n + 1)](k_3) + [n(n)](k_4) = k_1 + k_2*n + k_2 + k_3*n^2 + k_3*n + k_4*n^2
+>> => T(f_3) = n + n^2 + n + n^2 = 2(n + n^2) => T(f_3) = n + n^2
+>> given that we're looking for the most significant variable, a variable with a lower exponent is less significant than one with a higher exponent
+>> => T(f_3) = n^2
+>> time use is square
+  f_3(n):
+    # k_1 | 1
+    a = 0
+    # k_2 | n + 1
+    for i = 1, 2, ..., n
+      # k_3 | n(n + 1)
+      for j = 1, 2, ..., n
+        # k_4 | n(n)
+        a + 1
+
+>> given that constants are insignificant in the calculation of time complexity, we can take them all to be the same 'k'
+>> assume here the worst case scenario
+>> T(bubble_sort) = kn + k[n(n - 1)]/2 + k([n(n - 1)/2 - 1) + k[n(n - 1)/2] => n + (n^2 - n) + (n^2 - n) + (n^2 - n)
+>> => T(bubble_sort) = n^2
+  bubble_sort(array, n):
+    # k | n
+    for i = 1, 2, ..., (n - 1)
+      # k | [(n - 1)n]/2 = arithmetic series
+      for j = n, (n - 1), ..., (i + 1)
+        # k | [(n - 1)n]/2 - 1
+        if array[j] < array[j - 1]
+          # k | [(n - 1)n]/2 OR 0
+          swap(array[j], array[j - 1])
+  
+  >> for j = n, (n - 1), ..., (i + 1)
+    i | cost
+    ========    +1 due to last conditional
+    1 | n ... 2 => n
+    2 | n ... 3 => n - 1
+    . | .     .    .
+    . | .     .    .
+    . | .     .    .
+n - 1 | n ... n => 2
+      => sum(from k=1, to n, of k); arithmetic series
+      
+  >> swap(array[j], array[j - 1])
+  >> given that it's impossible to know how many times this line will execute, assume the average of the best and worst cases
+    -> best case: 0
+    -> worst case: [n(n - 1)/2]

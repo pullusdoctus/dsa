@@ -1,0 +1,113 @@
+TODO
+Exercises 2.1-1 to 2.1-5
+
+2.1 INSERTION SORT
+
+{31, 41, 59, 26, 41, 58}
+== ALGORITHM ==
+insertion_sort(array, array_size):
+  // 1-index
+  for i = 2, 3, ..., array-size
+    key = array[i]
+    // Insert array[i] into the sorted subarray array[1:i-1]
+    j = i - 1
+    while j > 0 and array[j] > key
+      array[j + 1] = array[j]
+      --j
+    array[j + 1] = key
+
+== PROPERTIES OF A LOOP INVARIANT IN INSERTION SORT ==
+1. Initialization (the loop invariant is true prior to the first iteration)
+  > i = 2
+  => subarray = array[1:2-1] = array[1:1] = array[1]
+  > array[1] is the original element in array[1]
+  > array[1] is a single element => array[1] is sorted
+  => Initialization holds
+2. Maintenance (the loop invariant is true before an iteration, and it remains true before the next iteration)
+  > given that array[1:i-1] contains the elements originally in array[1:i-1]
+  > given that the for loop sorts the elements in array[1:i-1] by inserting array[i] in its spot
+  => array[1:i] is sorted and holds the elements originally in array[1:i]
+3. Termination (the loop invariant terminates, proving its correctnes)
+  > i starts at 2 and increases by 1
+  > once i > array_size, the loop invariant ends
+    > that is, once i = array_size + 1
+  > this means that the last iteration sorts array[1:i-1] = array[1:(array_size+1)-1] = array[1:array_size]
+  > that is, the last iteration sorts the array
+  => the loop invariant ends once the array is sorted
+
+2.2 ANALYZING ALGORITHMS
+
+Assume:
+  1. Instructions take the same to execute => pseudocode lines the the same to execute
+  2. The instruction set is:
+    i. add
+    ii. substract
+    iii. multiply
+    iv. divide
+    v. remainder
+    vi. floor
+    vii. ceiling
+    viii. load data
+    ix. store data
+    x. copy data
+    xi. conditional branch
+    xii. unconditional branch
+    xiii. call
+    xiv. return
+  3. Data types are int, float, and char
+  4. An analysis is done on a generic pseudocode-algorithm and not on a specific code implementation
+  5. The exit condition of a loop is an additional comparison
+
+
+-> take n = array-size, A = array, c = cost, t = times a loop executes
+insertion_sort(A, n):
+  // c: succesful loops + exit comparison = n - 1 + 1 = n
+  for i = 2, 3, ..., array-size
+    // c: n - 1
+    key = array[i]
+    // c: n - 1
+    j = i - 1
+    // c: sum of t from i=2 to n
+    while j > 0 and array[j] > key
+      // c: sum of t-1 from i=2 to n
+      array[j + 1] = array[j]
+      // c: sum of t-1 from i=2 to n
+      --j
+    // c: n - 1
+    array[j + 1] = key
+=> T(n) = cn + c(n - 1) + c(n - 1) + c[sum of t from i=2 to n] + c[sum of t-1 from i=2 to n] + c[sum of t-1 from i=2 to n] + c(n - 1)
+
+--> Assume best case (array is sorted):
+    => line 4 executes once and never goes inside its loop => t = 1 => [sum of t from i=2 to n] = n - 1
+     => T(n) = cn + c(n - 1) + c(n - 1) + c(n - 1) + c(n - 1) = c(n + n - 1 + n - 1 + n - 1 + n - 1) = c(5n - 4)
+      => T(n) is linear
+
+--> Assume worst case (array is reverse sorted):
+    => line 4 executes i times => t = i => [sum of t from i=2 to n] = [sum of i from i=1 to n] - 1 = [n(n+1)]/2 - 1
+      => T(n) = cn + c(n - 1) + c(n - 1) + c[n(n + 1)/2 - 1] + c[n(n + 1)/2] + c[n(n + 1)/2] + c(n - 1)
+              = cn + cn - c + cn - c + c[(n^2 + n)/2 - 1] + c[(n^2 + n)/2] + c[(n^2 + n)/2] + cn - c
+              = 4cn - 3c + (cn^2)/2 + (cn)/2 - c + (cn^2)/2 + (cn)/2 + (cn^2)/2 + (cn)/2
+              = 4cn - 4c + (3/2)(cn^2) + (3/2)(cn)
+              = (3/2)(cn^2) + (11/2)(cn) - 4c
+        => T(n) is cuadratic
+
+-> ALWAYS ASSUME WORST CASE, because
+  1. It gives an upper bound for any input n
+  2. Worst cases are fairly common
+  3. The average is roughly as bad as the worst
+
+-> Constants, be them costs or actual numeric constants, aren't that important in the grand scheme of things: since we assume the worst, assume also a ginormous input n. Thus, a change of value in those constants pales next to the size of n. So, rewrite T(n) for insertion_cost as:
+  -> Best case: T(n) = an + b; a = 5c, b = -4
+  -> Worst case: T(n) = an^ + bn + c; a = 3c/2, b = 11c/2, c = -4c; c's left of the equals are cost c's, not variable c's
+-> The rate of growth for big values of n is given by the leading term; i.e., the term with the greatest power. In this same scenario, both lower terms and the leading term's coefficient become irrelevant. So, rewritten:
+  -> Best case: T(n) = n
+  -> Worst case: T(n) = n^2
+-> This all can be rewritten in theta notation, where th(n) represents "roughly proportional when n is large"
+  -> Best case: th(n)
+  -> Worst case: th(n^2)
+
+EXERCISES
+
+2.2-2
+Selection sort: Consider an array of size n. Sort its n elements by finding the smallest element of A[1:n] and swapping it with A[1]. Continue with A[2:n] and A[2], all the way up until A[n-1:n] and A[n-1].
+Write pseudocode for selection sort. What loop invariant does it maintain? Why does it only run for n - 1 elements, and not all n elements? Give the worst case in theta notation. Is the best case better?
